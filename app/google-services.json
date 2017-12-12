@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1009181039896",
+    "firebase_url": "https://ride-6b6e1.firebaseio.com",
+    "project_id": "ride-6b6e1",
+    "storage_bucket": "ride-6b6e1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009181039896:android:82a419036862fc32",
+        "android_client_info": {
+          "package_name": "com.example.laptop.ride"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1009181039896-tdq07i5tdh0hqcg11fh68inhcenn230d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.laptop.ride",
+            "certificate_hash": "f8a40fcec7c4fd85541fed93ded6f068d5fec08d"
+          }
+        },
+        {
+          "client_id": "1009181039896-gf7ubl0o7b4behldvsiq8vpucel7271n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAswVc4G7mX5jaQmvQ_h-Ja6UkxnTFzQLY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1009181039896-gf7ubl0o7b4behldvsiq8vpucel7271n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
