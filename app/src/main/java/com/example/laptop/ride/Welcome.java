@@ -3,20 +3,30 @@ package com.example.laptop.ride;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.pm.PackageManager;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.location.Location;
+import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Interpolator;
@@ -72,6 +82,9 @@ import Retrofit.IGoogleAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.R.attr.id;
+import static com.example.laptop.ride.R.id.locationwitch;
 
 public class Welcome extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -149,8 +162,17 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
                     ));
                 }
             });
-            valueAnimator.start();
-            handler.postDelayed(this,3000);
+            if (location_switch.isChecked()
+                    ) {
+                valueAnimator.start();
+                handler.postDelayed(this,3000);
+
+            }
+            else
+            {
+                valueAnimator.cancel();
+            }
+
         }
     };
 
@@ -179,8 +201,14 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
+
+
         //Initialize View
-        location_switch =(MaterialAnimatedSwitch)findViewById(R.id.locationwitch);
+
+
+
+        location_switch =(MaterialAnimatedSwitch)findViewById(locationwitch);
         location_switch.setOnCheckedChangeListener(new MaterialAnimatedSwitch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(boolean isOnline) {
@@ -196,6 +224,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
                     stopLocationUpdates();
                     mCurrent.remove();
                     mMap.clear();
+                    handler = new Handler();
                     handler.removeCallbacks(drawPathRunnable);
                     Snackbar.make(mapFragment.getView(),"You Are Offline", Snackbar.LENGTH_SHORT)
                             .show();
@@ -301,7 +330,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
 
                                 //Animation
                                 ValueAnimator polyLineAnimator = ValueAnimator.ofInt(0,100);
-                                polyLineAnimator.setDuration(2000);
+                                polyLineAnimator.setDuration(1000);
                                 polyLineAnimator.setInterpolator(new LinearInterpolator());
                                 polyLineAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                     @Override
@@ -314,7 +343,16 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
                                         blackPolyLine.setPoints(p);
                                     }
                                 });
-                                polyLineAnimator.start();
+                                if (location_switch.isChecked()
+                                        ) {
+                                    polyLineAnimator.start();
+
+                                }
+                                else {
+                                    polyLineAnimator.cancel();
+                                }
+
+
 
                                 carMarker = mMap.addMarker(new MarkerOptions().position(currentPosition)
                                 .flat(true)
@@ -323,7 +361,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
                                 handler = new Handler();
                                 index = -1;
                                 next = 1;
-                                handler.postDelayed(drawPathRunnable,3000);
+                                handler.postDelayed(drawPathRunnable,2000);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

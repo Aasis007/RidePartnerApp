@@ -14,14 +14,6 @@
             android:layout_height="wrap_content">
 
 
-            <!--<EditText-->
-                <!--android:id="@+id/edtplace"-->
-                <!--android:hint="Enter Pickup Location"-->
-                <!--android:layout_marginTop="10dp"-->
-                <!--android:layout_margin="10dp"-->
-                <!--android:layout_weight="5"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"/>-->
 
            <fragment
                android:id="@+id/place_autocomplete_fragment"
@@ -72,8 +64,8 @@
               android:layout_width="0dp"
               android:layout_height="wrap_content"
               android:layout_weight="3"
-              app:icon_release="@drawable/ic_location_off_black_24dp"
-              app:icon_press="@drawable/ic_action_name2"
+              app:icon_release="@mipmap/locationoff"
+              app:icon_press="@mipmap/locationon"
               app:base_release_color="@color/baseReleaseColor"
               app:base_press_color="@color/basePresscolor"
               app:ball_release_color="@color/ballReleaseColor"
