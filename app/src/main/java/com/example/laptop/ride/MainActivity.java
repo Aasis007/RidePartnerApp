@@ -25,6 +25,7 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.w3c.dom.Text;
 
+import Common.Common;
 import dmax.dialog.SpotsDialog;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         //Initialize Firebase
         auth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance();
-        users = db.getReference("Users");
+        users = db.getReference(Common.user_driver_tbl);
 
 
         Signin = (Button)findViewById(R.id.signinbtn);
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private void showLoginDialog() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("SIGN IN");
-        dialog.setMessage("Please use phoneNumber to signin");
+        dialog.setMessage("Please use email to signin");
         LayoutInflater inflater = LayoutInflater.from(this);
         View login_yout = inflater.inflate(R.layout.layout_login, null);
         final MaterialEditText editemail = login_yout.findViewById(R.id.editemail);
@@ -112,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                             return;
 
 
-
                         }
                         if (editpass.getText().toString().length() < 6) {
 
@@ -120,27 +120,27 @@ public class MainActivity extends AppCompatActivity {
                                     .show();
                             return;
 
-                        }
+                        } else {
 
 
                             final SpotsDialog waitingdialog = new SpotsDialog(MainActivity.this);
                             waitingdialog.show();
 
 
-                        //Login
-                            auth.signInWithEmailAndPassword(editemail.getText().toString(),editpass.getText().toString())
+                            //Login
+                            auth.signInWithEmailAndPassword(editemail.getText().toString(), editpass.getText().toString())
                                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                         @Override
                                         public void onSuccess(AuthResult authResult) {
                                             waitingdialog.dismiss();
-                                            startActivity(new Intent(MainActivity.this,Welcome.class));
+                                            startActivity(new Intent(MainActivity.this, Welcome.class));
                                             finish();
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     waitingdialog.dismiss();
-                                    Snackbar.make(mainLayout,"Failed to Login"+e.getMessage(),Snackbar.LENGTH_SHORT)
+                                    Snackbar.make(mainLayout, "Failed to Login" + e.getMessage(), Snackbar.LENGTH_SHORT)
                                             .show();
 
                                     //Active button
@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
 
+                        }
                     }
                 });
         dialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {

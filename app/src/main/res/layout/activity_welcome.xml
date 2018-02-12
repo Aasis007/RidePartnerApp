@@ -25,12 +25,7 @@
 
            </fragment>
 
-            <!--<Button-->
-                <!--android:layout_weight="1"-->
-                <!--android:text="Go"-->
-                <!--android:id="@+id/btnGo"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="match_parent"/>-->
+
         </LinearLayout>
 
 
@@ -75,8 +70,10 @@
                  android:id="@+id/finduser"
                  android:layout_weight="7"
                  android:text="Find User"
+                 android:textStyle="bold"
                  android:textColor="@android:color/black"
                  android:layout_width="0dp"
+                 android:background="#607D8B"
                  android:layout_height="wrap_content"/>
 
          </LinearLayout>
