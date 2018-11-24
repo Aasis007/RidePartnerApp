@@ -7,6 +7,7 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality. 
     -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -40,18 +41,22 @@
         <activity
             android:name=".Welcome"
             android:label="@string/title_activity_welcome" />
-        <activity android:name=".CustomerCall"></activity>
+        <activity android:name=".CustomerCall" />
+
         <service android:name=".Service.MyFirebaseIdService">
             <intent-filter>
-                <action android:name="com.gogole.firebase.INSTANCE_ID_EVENT">
-                </action>
+                <action android:name="com.gogole.firebase.INSTANCE_ID_EVENT"></action>
             </intent-filter>
         </service>
         <service android:name=".Service.MyFirebaseMessaging">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".RiderTracking"
+            android:label="@string/title_activity_rider_tracking"></activity>
     </application>
 
 </manifest>

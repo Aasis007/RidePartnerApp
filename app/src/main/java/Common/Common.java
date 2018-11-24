@@ -2,6 +2,7 @@ package Common;
 
 import android.location.Location;
 
+import com.example.laptop.ride.Model.User;
 import com.google.android.gms.maps.internal.IGoogleMapDelegate;
 
 import Retrofit.FCMClient;
@@ -21,7 +22,9 @@ public class Common {
     public static final String user_rider_tbl = "RidersInformation";
     public static final String pickup_request_tbl = "Pickuprequest";
     public static String token_tbl = "Tokens";
+    public static User currentuser;
     public static Location mLastLocation=null;
+
 
 
 

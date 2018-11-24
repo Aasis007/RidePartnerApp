@@ -1,16 +1,24 @@
 package com.example.laptop.ride;
 
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.laptop.ride.Model.FCMResponse;
+import com.example.laptop.ride.Model.Notification;
+import com.example.laptop.ride.Model.Sender;
+import com.example.laptop.ride.Model.Token;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -28,6 +36,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 import Common.Common;
+import Retrofit.IFCMService;
 import Retrofit.IGoogleAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,6 +48,10 @@ public class CustomerCall extends AppCompatActivity {
     MediaPlayer mediaPlayer;
 
     IGoogleAPI mServices;
+    IFCMService mFCMService;
+    Button acceptBtn,declinebtn;
+    String customerID;
+    double lat,lng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +59,7 @@ public class CustomerCall extends AppCompatActivity {
         setContentView(R.layout.activity_customer_call);
 
         mServices = Common.getGoogleAPI();
+        mFCMService = Common.getFCMService();
 
         //initialize views
 
@@ -53,14 +67,40 @@ public class CustomerCall extends AppCompatActivity {
         Distance = (TextView) findViewById(R.id.txtDistance);
         Time = (TextView) findViewById(R.id.txtTime);
 
+        //buttons
+        acceptBtn = (Button)findViewById(R.id.btnacept);
+
+        acceptBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CustomerCall.this,RiderTracking.class);
+                intent.putExtra("lat",lat);
+                intent.putExtra("lng",lng);
+                intent.putExtra("customerID",customerID);
+                startActivity(intent);
+                finish();
+            }
+        });
+        declinebtn = (Button)findViewById(R.id.declinebtn);
+
+        declinebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!TextUtils.isEmpty(customerID))
+                        cancelbooking();
+
+            }
+        });
+
         mediaPlayer = MediaPlayer.create(this, R.raw.ringtone);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
 
         if (getIntent() != null) {
-            double lat = getIntent().getDoubleExtra("lat",0);
-            double lng = getIntent().getDoubleExtra("lng", 0);
+           lat = getIntent().getDoubleExtra("lat",0);
+            lng = getIntent().getDoubleExtra("lng", 0);
 
+            customerID = getIntent().getStringExtra("customer");
 
             getDirection(lat, lng);
 
@@ -68,6 +108,29 @@ public class CustomerCall extends AppCompatActivity {
         }
 
 
+    }
+
+    private void cancelbooking() {
+        Token token = new Token(customerID);
+        Notification notification = new Notification("Cancel","Partner has declined your ride request");
+        Sender sender = new Sender(token.getToken(),notification);
+
+        mFCMService.sendMessage(sender)
+                .enqueue(new Callback<FCMResponse>() {
+                    @Override
+                    public void onResponse(Call<FCMResponse> call, Response<FCMResponse> response) {
+                        if (response.body().success == 1)
+                        {
+                            Toast.makeText(CustomerCall.this, "Request Cancelled",Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<FCMResponse> call, Throwable t) {
+
+                    }
+                });
     }
 
     private void getDirection(double lat, double lng) {

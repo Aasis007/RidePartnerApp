@@ -69,5 +69,39 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp">
+
+
+        <Button
+            android:id="@+id/btnacept"
+            android:layout_weight="1"
+            android:background="#f816a463"
+            android:layout_marginRight="6dp"
+            android:textColor="@android:color/white"
+            android:text="ACCEPT"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+
+        <Button
+            android:id="@+id/declinebtn"
+            android:layout_weight="1"
+            android:background="#f816a463"
+            android:layout_marginRight="6dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:text="DECLINE"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
 
 </RelativeLayout>

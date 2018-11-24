@@ -67,9 +67,11 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONArray;
@@ -78,6 +80,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import Common.Common;
 import Retrofit.IGoogleAPI;
@@ -102,9 +105,6 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
 
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
-    private static int UPDATE_INTERBAL = 5000;
-    private static int FASTEST_INTERval = 3000;
-    private static int DISPLACEMENT = 10;
 
     DatabaseReference drivers;
     GeoFire geoFire;
@@ -127,6 +127,9 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
     private PolylineOptions polylineOptions,blackpolyLineOptions;
     private Polyline blackPolyLine,greyPolyLine;
     private IGoogleAPI mServices;
+
+    //Presence system
+        DatabaseReference onlineRef,currentUserRef;
 
     Runnable drawPathRunnable = new Runnable() {
         @Override
@@ -203,6 +206,23 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
 
 
 
+        //Presence system
+        onlineRef = FirebaseDatabase.getInstance().getReference().child("info/connected");
+        currentUserRef = FirebaseDatabase.getInstance().getReference(Common.driver_tbl)
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        onlineRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                currentUserRef.onDisconnect().removeValue();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
         //Initialize View
 
@@ -214,19 +234,21 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
             public void onCheckedChanged(boolean isOnline) {
                 if (isOnline)
                 {
+                    FirebaseDatabase.getInstance().goOnline();//set connected
                     startLocationUpdates();
                     displayLocation();
-                    Snackbar.make(mapFragment.getView(),"You Are Online", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(Objects.requireNonNull(mapFragment.getView()),"You Are Online", Snackbar.LENGTH_SHORT)
                             .show();
                 }
                 else
                 {
+                    FirebaseDatabase.getInstance().goOffline();//set offline
                     stopLocationUpdates();
                     mCurrent.remove();
                     mMap.clear();
                     handler = new Handler();
                     handler.removeCallbacks(drawPathRunnable);
-                    Snackbar.make(mapFragment.getView(),"You Are Offline", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(Objects.requireNonNull(mapFragment.getView()),"You Are Offline", Snackbar.LENGTH_SHORT)
                             .show();
                 }
 
@@ -277,7 +299,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
 
         Token token = new Token(FirebaseInstanceId.getInstance().getToken());
 
-            tokens.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+            tokens.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                     .setValue(token);
 
 
@@ -480,9 +502,12 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
 
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
+        int UPDATE_INTERBAL = 5000;
         mLocationRequest.setInterval(UPDATE_INTERBAL);
+        int FASTEST_INTERval = 3000;
         mLocationRequest.setFastestInterval(FASTEST_INTERval);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        int DISPLACEMENT = 10;
         mLocationRequest.setSmallestDisplacement(DISPLACEMENT);
     }
 
@@ -537,7 +562,7 @@ public class Welcome extends FragmentActivity implements OnMapReadyCallback,
                 final double longitude = Common.mLastLocation.getLongitude();
 
                 //Update to Frebase
-                geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(), new GeoLocation(latitude, longitude), new GeoFire.CompletionListener() {
+                geoFire.setLocation(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid(), new GeoLocation(latitude, longitude), new GeoFire.CompletionListener() {
                     @Override
                     public void onComplete(String key, DatabaseError error) {
                         //Add MArker
